@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bingo del Orobioma — Experiencia Educativa</title>
+<meta name="description" content="Bingo educativo sobre el ecosistema semiseco del altiplano cundiboyacense. Décimo Grado, Ciencias Naturales, 2026.">
+
+<!-- Google Fonts: precargas + estilos -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- Estilos del proyecto (extraídos del monolito para mejor mantenibilidad) -->
+<link rel="stylesheet" href="estilos/styles.css">
+
+<!-- GSAP (carga síncrona para que esté disponible antes de script.js) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+<!-- Capa de fondo cinematográfica (tus 4 fotos) -->
+<div class="bg-layer" id="bgLayer">
+  <div class="bg-photo" data-img="1"></div>
+  <div class="bg-photo" data-img="2"></div>
+  <div class="bg-photo" data-img="3"></div>
+  <div class="bg-photo" data-img="4"></div>
+</div>
+<div class="bg-veil"></div>
+
+<!-- Cursor personalizado TEMÁTICO Orobioma: brújula-talismán + semilla-baya + polen orbital + trail de hojas -->
+<div class="cursor-halo" id="cursorHalo"></div>
+
+<!-- Brújula-talismán: anillo exterior con hojas en 4 puntos cardinales -->
+<div class="cursor-ring" id="cursorRing">
+  <svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#a8d49a"/>
+        <stop offset="50%" stop-color="#8cbe82"/>
+        <stop offset="100%" stop-color="#5a8a52"/>
+      </linearGradient>
+      <linearGradient id="leafGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#a8d49a"/>
+        <stop offset="100%" stop-color="#3d6b4a"/>
+      </linearGradient>
+    </defs>
+    <!-- Corona circular principal -->
+    <circle class="pulse" cx="27" cy="27" r="14" fill="none" stroke="url(#ringGrad)" stroke-width="1.2" opacity="0.85"/>
+    <circle cx="27" cy="27" r="14" fill="none" stroke="#a8d49a" stroke-width="0.4" stroke-dasharray="2 3" opacity="0.5"/>
+    <!-- 4 hojas en los puntos cardinales -->
+    <g class="leaf-n"><path d="M27 4 Q30 9 27 13 Q24 9 27 4 Z" fill="url(#leafGrad)" opacity="0.9"/></g>
+    <g class="leaf-e"><path d="M50 27 Q45 30 41 27 Q45 24 50 27 Z" fill="url(#leafGrad)" opacity="0.9"/></g>
+    <g class="leaf-s"><path d="M27 50 Q24 45 27 41 Q30 45 27 50 Z" fill="url(#leafGrad)" opacity="0.9"/></g>
+    <g class="leaf-w"><path d="M4 27 Q9 24 13 27 Q9 30 4 27 Z" fill="url(#leafGrad)" opacity="0.9"/></g>
+    <!-- 4 puntos cardinales pequeños (marcas de brújula) -->
+    <circle cx="27" cy="2" r="1" fill="#d4a44c"/>
+    <circle cx="52" cy="27" r="1" fill="#d4a44c"/>
+    <circle cx="27" cy="52" r="1" fill="#d4a44c"/>
+    <circle cx="2" cy="27" r="1" fill="#d4a44c"/>
+  </svg>
+</div>
+
+<!-- Semilla-baya central: fruto del orobioma -->
+<div class="cursor-dot" id="cursorDot">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="seedGrad" cx="35%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#c8e6b8"/>
+        <stop offset="50%" stop-color="#8cbe82"/>
+        <stop offset="100%" stop-color="#3d6b4a"/>
+      </radialGradient>
+    </defs>
+    <!-- cuerpo de la semilla/baya -->
+    <ellipse cx="12" cy="13" rx="6.5" ry="7.5" fill="url(#seedGrad)"/>
+    <!-- tallo verde arriba -->
+    <path d="M12 5 Q12 2 14 1.5" stroke="#3d6b4a" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <!-- hojita lateral -->
+    <path d="M14 6 Q17 5 17 8" stroke="#5a8a52" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <!-- brillo especular -->
+    <ellipse cx="9" cy="10" rx="2" ry="3" fill="#fff" opacity="0.35"/>
+    <!-- nervadura central -->
+    <path d="M12 7 Q12 13 12 19" stroke="#3d6b4a" stroke-width="0.4" fill="none" opacity="0.5"/>
+  </svg>
+</div>
+
+<!-- Polen orbital: 3 partículas tipo semilla -->
+<div class="cursor-sparkle" id="cursorSparkle1">
+  <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="5" cy="5" r="3" fill="#d4a44c"/>
+    <circle cx="5" cy="5" r="1.5" fill="#e8c275"/>
+  </svg>
+</div>
+<div class="cursor-sparkle" id="cursorSparkle2">
+  <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="5" cy="5" r="2.5" fill="#a8d49a"/>
+    <circle cx="5" cy="5" r="1.2" fill="#c8e6b8"/>
+  </svg>
+</div>
+<div class="cursor-sparkle" id="cursorSparkle3">
+  <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="5" cy="5" r="3" fill="#d4a44c"/>
+    <circle cx="5" cy="5" r="1.5" fill="#e8c275"/>
+  </svg>
+</div>
+
+<!-- Panel del Banco de Sonidos (SFX picker) -->
+<button class="sfx-toggle" id="sfxToggle" aria-label="Abrir banco de sonidos" aria-expanded="false" title="Banco de sonidos">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M9 18V5l12-2v13"/>
+    <circle cx="6" cy="18" r="3"/>
+    <circle cx="18" cy="16" r="3"/>
+  </svg>
+</button>
+
+<aside class="sfx-panel" id="sfxPanel" aria-label="Banco de sonidos" aria-hidden="true">
+  <header class="sfx-panel-head">
+    <div>
+      <div class="eyebrow">Banco de sonidos</div>
+      <h3>SFX del orobioma</h3>
+    </div>
+    <button class="sfx-close" id="sfxClose" aria-label="Cerrar banco de sonidos">×</button>
+  </header>
+  <p class="sfx-panel-sub">10 efectos desde bancos libres. Click para previsualizar. La música de fondo la provees tú.</p>
+
+  <div class="sfx-grid" id="sfxGrid">
+    <!-- Inyectado por JS -->
+  </div>
+
+  <footer class="sfx-panel-foot">
+    <span>Sonidos libres: <a href="https://freesound.org" target="_blank" rel="noopener">freesound.org</a> · <a href="https://mixkit.co" target="_blank" rel="noopener">mixkit.co</a></span>
+  </footer>
+</aside>
+
+<!-- Toasts -->
+<div class="toast-wrap" id="toasts" aria-live="polite"></div>
+
+<!-- Indicador de ficha en juego -->
+<div class="ficha-pill" id="fichaPill" aria-hidden="true">
+  <span class="ficha-label">Ficha</span>
+  <span class="ficha-term" id="fichaTerm">—</span>
+  <span class="ficha-count" id="fichaCount">1 / 24</span>
+</div>
+
+<!-- ═══════════ Preloader ═══════════ -->
+<div id="preloader">
+  <div class="pre-logo" id="preLogo"></div>
+  <div class="pre-title">Orobioma</div>
+  <div class="pre-sub">Cargando experiencia</div>
+  <div class="pre-track"></div>
+</div>
+
+<!-- ═══════════ Intro ═══════════ -->
+<section id="intro" aria-label="Introducción">
+  <button class="intro-skip" onclick="skipIntro()">Saltar ▸</button>
+  <div class="intro-stage" id="introStage"></div>
+</section>
+
+<!-- ═══════════ Tutorial ═══════════ -->
+<main id="tutorial" class="screen">
+  <div class="screen-inner">
+    <header class="tut-header">
+      <div class="eyebrow">Guía interactiva</div>
+      <h1>El arte de jugar al <em>Orobioma</em></h1>
+      <p>Una experiencia educativa sobre los ecosistemas semisecos del altiplano cundiboyacense. Aprende las reglas, conoce los equipos y prepárate para la partida.</p>
+    </header>
+
+    <div class="slides">
+      <!-- Slide 1: Bienvenida -->
+      <article class="slide active" id="slide1">
+        <div class="slide-head">
+          <div class="eyebrow">I — Bienvenida</div>
+          <h2>Bienvenidos al <em>Bingo del Orobioma</em></h2>
+          <p>Un juego educativo donde aprenderás sobre los ecosistemas semisecos del altiplano cundiboyacense mientras te diviertes en equipo. Cinco voces, un mismo territorio.</p>
+        </div>
+        <div class="cards c4">
+          <div class="card" data-icon="flask">
+            <div class="card-icon-wrap"><svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 V12 L7 25 C 6 27 7 29 10 29 H22 C 25 29 26 27 25 25 L20 12 V4"/><line x1="11" y1="4" x2="21" y2="4"/><path d="M10 18 H22" opacity=".6"/></svg></div>
+            <div class="card-label">Asignatura</div>
+            <div class="card-value">Ciencias Naturales</div>
+          </div>
+          <div class="card" data-icon="grad">
+            <div class="card-icon-wrap"><svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12 L16 6 L30 12 L16 18 Z"/><path d="M8 15 V23 C 8 25 12 27 16 27 C 20 27 24 25 24 23 V15"/><line x1="28" y1="13" x2="28" y2="22"/></svg></div>
+            <div class="card-label">Nivel</div>
+            <div class="card-value">Décimo Grado</div>
+          </div>
+          <div class="card" data-icon="mountain">
+            <div class="card-icon-wrap"><svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 26 L11 11 L17 19 L21 14 L29 26 Z"/><circle cx="22" cy="8" r="2.5"/><path d="M11 11 L14 16 M17 19 L19 21" opacity=".5"/></svg></div>
+            <div class="card-label">Ecosistema</div>
+            <div class="card-value">Semiseco andino</div>
+          </div>
+          <div class="card" data-icon="calendar">
+            <div class="card-icon-wrap"><svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="24" height="22" rx="2"/><line x1="4" y1="12" x2="28" y2="12"/><line x1="11" y1="3" x2="11" y2="9"/><line x1="21" y1="3" x2="21" y2="9"/><circle cx="11" cy="18" r="1.2" fill="currentColor"/><circle cx="16" cy="18" r="1.2" fill="currentColor"/><circle cx="21" cy="18" r="1.2" fill="currentColor"/><circle cx="11" cy="23" r="1.2" fill="currentColor"/><circle cx="16" cy="23" r="1.2" fill="currentColor"/></svg></div>
+            <div class="card-label">Año</div>
+            <div class="card-value">2026</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Slide 2: Equipos -->
+      <article class="slide" id="slide2">
+        <div class="slide-head">
+          <div class="eyebrow">II — Equipos</div>
+          <h2>Cinco <em>voces</em>, cinco miradas</h2>
+          <p>Cada equipo representa una de las fuerzas que conviven en el territorio del Orobioma. Sus tarjetas son únicas y sus estrategias diversas.</p>
+        </div>
+        <div class="cards c3" id="teamsGrid"></div>
+      </article>
+
+      <!-- Slide 3: Cómo se juega -->
+      <article class="slide" id="slide3">
+        <div class="slide-head">
+          <div class="eyebrow">III — Mecánica</div>
+          <h2>Cómo <em>se juega</em></h2>
+          <p>Cuatro pasos sencillos pero que exigen atención plena. Una sola casilla mal marcada puede costar la victoria.</p>
+        </div>
+        <div class="steps" id="stepsGrid"></div>
+      </article>
+
+      <!-- Slide 4: Cómo ganar -->
+      <article class="slide" id="slide4">
+        <div class="slide-head">
+          <div class="eyebrow">IV — Victoria</div>
+          <h2>Cómo <em>se gana</em></h2>
+          <p>Completa líneas y sé el más rápido. El objetivo real es completar tres líneas cuanto antes para asegurar la máxima puntuación.</p>
+        </div>
+        <div class="section-label">Líneas ganadoras</div>
+        <div class="line-demos" id="lineDemos"></div>
+        <div class="section-label">Sistema de puntuación</div>
+        <div class="score-table" id="scoreTable"></div>
+        <div class="note">La velocidad es la clave: el primer equipo en completar tres líneas y cantar BINGO obtiene 5.0</div>
+      </article>
+
+      <!-- Slide 5: Reglas y consejos -->
+      <article class="slide" id="slide5">
+        <div class="slide-head">
+          <div class="eyebrow">V — Reglas y consejos</div>
+          <h2>Reglas y <em>consejos</em></h2>
+          <p>Respeta las reglas para evitar descalificaciones y aplica estos consejos para llevar a tu equipo a la victoria.</p>
+        </div>
+        <div class="section-label">Reglas importantes</div>
+        <div class="cards c2" style="margin-bottom:var(--space-7)">
+          <div class="card rule-card">
+            <div class="rule-icon rule-icon-sage"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="13"/><path d="M10 16 L14 20 L22 12"/></svg></div>
+            <div class="rule-body">
+              <div class="rule-title">Espera la voz del moderador</div>
+              <div class="card-text">Solo se vale marcar después de que el moderador lea el término en voz alta.</div>
+            </div>
+          </div>
+          <div class="card rule-card">
+            <div class="rule-icon rule-icon-amber"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 H10 L18 6 V26 L10 20 H5 Z"/><path d="M22 10 C 24 12 24 20 22 22"/></svg></div>
+            <div class="rule-body">
+              <div class="rule-title">No anticipes</div>
+              <div class="card-text">No se puede marcar sin que el moderador haya cantado el término.</div>
+            </div>
+          </div>
+          <div class="card rule-card">
+            <div class="rule-icon rule-icon-rose"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 28 L8 12 L12 28 M16 28 L19 12 L22 28 M25 28 L28 12"/><path d="M5 16 H28" opacity=".4"/></svg></div>
+            <div class="rule-body">
+              <div class="rule-title">Grita ¡BINGO!</div>
+              <div class="card-text">Debes gritar ¡BINGO! inmediatamente al completar una línea.</div>
+            </div>
+          </div>
+          <div class="card rule-card">
+            <div class="rule-icon rule-icon-deep"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="13"/><path d="M16 8 V24 M11 13 H21 M11 19 H21" opacity=".8"/></svg></div>
+            <div class="rule-body">
+              <div class="rule-title">Verificación final</div>
+              <div class="card-text">El moderador verifica que las casillas marcadas sean correctas.</div>
+            </div>
+          </div>
+        </div>
+        <div class="section-label">Consejos para ganar</div>
+        <div class="cards c4" id="tipsGrid"></div>
+      </article>
+    </div>
+
+    <nav class="tut-nav">
+      <button class="btn btn-ghost" id="prevBtn" onclick="tutPrev()">◂ Anterior</button>
+      <div class="dots" id="dots"></div>
+      <button class="btn btn-primary" id="nextBtn" onclick="tutNext()">Comenzar ▸</button>
+    </nav>
+  </div>
+</main>
+
+<!-- ═══════════ Pantalla de inicio del juego ═══════════ -->
+<section id="game-start">
+  <div class="gs-content">
+    <div class="eyebrow">Listo para jugar</div>
+    <h1>Bingo del <em>Orobioma</em></h1>
+    <p>Primero verás una partida demo donde cinco bots juegan a velocidad máxima: las fichas salen rápidas y las casillas se marcan en tiempo real. Cuando un equipo complete una línea, escucharás su BINGO. Luego pasarás al juego real.</p>
+    <button class="btn btn-primary" onclick="beginExperience()" style="font-size:1rem;padding:18px 40px">
+      Comenzar experiencia
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ═══════════ Juego principal ═══════════ -->
+<main id="game-main" class="screen">
+  <div class="game-bar">
+    <div class="game-bar-left">
+      <div class="game-bar-logo">
+        <span class="logo-mark" id="barLogo" style="--logo-size:34px"></span>
+        <span>Bingo del Orobioma</span>
+      </div>
+      <div class="game-bar-mode" id="gameMode">Demo · bots automáticos</div>
+    </div>
+    <div class="leader-pill">
+      <span class="dot-leader" id="leaderDot"></span>
+      <span>Líder: <span class="leader-n" id="leaderName">—</span></span>
+    </div>
+    <button class="btn-reset" onclick="confirmReset()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      Reiniciar
+    </button>
+  </div>
+
+  <div class="bingo-grid" id="bingoGrid"></div>
+
+  <div class="control-table" id="controlTable" style="display:none">
+    <h2>Registro de Bingos</h2>
+    <p>Pulsa «+» para añadir un Bingo de un equipo, o «−» para corregir un punto añadido por error. Al finalizar, pulsa «Terminado».</p>
+    <div id="controlRows"></div>
+    <div class="control-actions">
+      <button class="btn-finish" id="btnFinish" onclick="finishGame()" disabled>✓ Terminado</button>
+    </div>
+  </div>
+</main>
+
+<!-- ═══════════ Mini carrera (separada del game-main) ═══════════ -->
+<section id="race-mini-screen" style="display:none">
+  <div class="race-mini" id="raceMini">
+    <div class="race-mini-title">Carrera al tricampeonato · 3 Bingos para ganar</div>
+    <div id="raceMiniRows"></div>
+  </div>
+</section>
+
+<!-- ═══════════ Pantalla de carrera fullscreen ═══════════ -->
+<section id="race-screen">
+  <div class="race-screen-inner">
+    <div class="race-screen-eyebrow">Gran carrera final</div>
+    <h1 class="race-screen-title">¿Quién <em>ganará</em>?</h1>
+    <p class="race-screen-sub">Primer equipo en completar tres Bingos</p>
+
+    <div class="race-big" id="raceBig"></div>
+
+    <div class="race-winner" id="raceWinner">
+      <div class="race-winner-label">Campeón</div>
+      <div class="race-winner-avatar" id="raceWinnerAvatar"></div>
+      <div class="race-winner-name" id="raceWinnerName">—</div>
+      <div class="race-winner-score" id="raceWinnerScore">0 Bingos</div>
+      <div class="race-winner-sub">Ganó la carrera del Orobioma</div>
+    </div>
+
+    <div style="margin-top:var(--space-7);text-align:center">
+      <button class="btn btn-primary" id="btnToWinners" onclick="showWinners()" style="display:none;font-size:1rem;padding:16px 36px">Ver resultados finales ▸</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Ganadores ═══════════ -->
+<section id="winners">
+  <canvas id="confetti-canvas"></canvas>
+  <div class="winners-inner" id="winnersInner"></div>
+</section>
+
+<!-- ═══════════ Créditos ═══════════ -->
+<section id="credits">
+  <div class="credits-inner">
+    <div class="credits-eyebrow">Con todo cariño</div>
+    <h1 class="credits-title">Gracias por <em>jugar</em></h1>
+    <p class="credits-thanks">Este proyecto fue creado con dedicación por el equipo Orobioma. Esperamos que hayas disfrutado esta experiencia educativa sobre los ecosistemas semisecos del altiplano cundiboyacense.</p>
+    <div class="credits-names" id="creditsNames"></div>
+    <div class="credits-footer">Décimo Grado · Ciencias Naturales · 2026</div>
+    <div style="margin-top:var(--space-7)">
+      <button class="btn btn-primary" onclick="fullRestart()" style="font-size:1rem;padding:16px 36px">Volver a empezar</button>
+    </div>
+  </div>
+</section>
+
+<!-- Lógica de la aplicación (extraída del monolito) -->
+<script src="js/script.js" defer></script>
+</body>
+</html>
